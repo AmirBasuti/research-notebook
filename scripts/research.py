@@ -205,7 +205,13 @@ def link_errors(body: str, origin: Path, root: Path) -> list[str]:
         path = Path(target)
         if not path.is_absolute():
             path = origin.parent / path
-        if not path.exists():
+        # A first record's directory does not exist yet. Resolve '..' before
+        # checking the target so POSIX does not require that future directory.
+        try:
+            exists = path.resolve(strict=False).exists()
+        except (OSError, RuntimeError):
+            exists = False
+        if not exists:
             errors.append(f"broken Markdown file link: {target}")
     return errors
 

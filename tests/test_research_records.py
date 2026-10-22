@@ -141,12 +141,20 @@ class ResearchRecordsTests(unittest.TestCase):
     def test_fenced_examples_and_relative_state_links(self):
         linked = self.notebook / "source.md"
         linked.write_text("# Source\n", encoding="utf-8")
+        # Validate links before the first record creates its parent directory.
+        self.assertFalse((self.notebook / "records").exists())
         self.add(body="# State\n\n[Source](../source.md)\n\n```markdown\n[example](missing.md)\n```\n")
         self.build()
         self.assertEqual([], research.validate(self.root, self.notebook))
         self.assertIn("](source.md)", (self.notebook / "CURRENT.md").read_text(encoding="utf-8"))
         handoff = research.context_text(self.root, self.notebook)
         self.assertIn(f"]({research.NOTEBOOK_REL.as_posix()}/source.md)", handoff)
+
+    def test_first_record_with_missing_parent_relative_link_is_rejected_before_write(self):
+        with self.assertRaisesRegex(research.ResearchError, "broken Markdown"):
+            self.add(body="# State\n\n[Missing](../missing.md)\n")
+        self.assertFalse((self.notebook / "records").exists())
+        self.assertFalse((self.notebook / "ledger.jsonl").exists())
 
     def test_stale_generated_and_missing_reference_detected(self):
         source = self.root / "evidence.md"

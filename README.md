@@ -13,8 +13,9 @@ model or network dependency. Git is required only for checkpoints and their test
 ## Five-minute example
 
 Run these commands from the repository root with Python 3.11 or newer. The local
-release was tested on Python 3.14.3; the included CI matrix is configured for
-3.11–3.14 on Linux and Windows, but those remote jobs have not yet run.
+release was tested on Python 3.14.3. The CI matrix covers Python 3.11–3.14 on
+Linux and Windows; see [Actions](https://github.com/AmirBasuti/research-notebook/actions)
+for the status and results of each run.
 
 ```sh
 python -c "import shutil; shutil.copytree('examples/demo', 'demo')"
@@ -140,7 +141,7 @@ path redirection, UTF-8 output, deterministic views and scoped Git transactions.
   truth of a source's claims.
 - A crashed writer can leave a lock. Inspect its host/PID and preserve evidence
   before manually recovering it; the tool never automatically breaks a lock.
-- Cross-platform CI is configured, not a claim of completed remote validation.
+- CI results apply to the commit and environments shown in the linked run.
 
 ## License
 
