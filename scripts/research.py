@@ -371,7 +371,8 @@ def clean_table(value: str) -> str:
 
 
 def relative_link(origin: Path, destination: Path) -> str:
-    return Path(os.path.relpath(destination, origin)).as_posix()
+    # Compare the same physical path spelling, including Windows short aliases.
+    return Path(os.path.relpath(destination.resolve(), origin.resolve())).as_posix()
 
 
 def rebase_markdown(body: str, origin_directory: Path, destination_directory: Path) -> str:

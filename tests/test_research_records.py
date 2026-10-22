@@ -150,6 +150,17 @@ class ResearchRecordsTests(unittest.TestCase):
         handoff = research.context_text(self.root, self.notebook)
         self.assertIn(f"]({research.NOTEBOOK_REL.as_posix()}/source.md)", handoff)
 
+    def test_relative_state_links_resolve_directory_aliases_consistently(self):
+        (self.notebook / "source.md").write_text("# Source\n", encoding="utf-8")
+        self.add(body="# State\n\n[Source](../source.md)\n")
+        self.build()
+        alias = self.root / "notebook-alias"
+        self.directory_link(alias, self.notebook)
+        current = research.render_views(self.root, alias)["CURRENT.md"]
+        self.assertIn("](source.md)", current)
+        handoff = research.context_text(self.root, alias)
+        self.assertIn("](notebook/source.md)", handoff)
+
     def test_first_record_with_missing_parent_relative_link_is_rejected_before_write(self):
         with self.assertRaisesRegex(research.ResearchError, "broken Markdown"):
             self.add(body="# State\n\n[Missing](../missing.md)\n")
